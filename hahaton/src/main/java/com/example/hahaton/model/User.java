@@ -35,13 +35,12 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @OneToMany
+    private Collection<Booking> bookings;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
                joinColumns = @JoinColumn(name = "user_id"),
                inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
-
-    @ManyToOne
-    @JoinColumn(name = "organisation_id")
-    private Organisation ownedOrganisation;
 }

@@ -1,6 +1,7 @@
 package com.example.hahaton.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 @Entity
 @Data
+@Builder
 @Table(name = "organisation")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,10 +25,4 @@ public class Organisation {
 
     @Column(name = "description")
     private String description;
-
-    @OneToMany(mappedBy = "ownedOrganisation")
-    private Collection<User> owners;
-
-    @OneToMany(mappedBy = "company")
-    private Collection<Office> offices;
 }

@@ -1,6 +1,7 @@
 package com.example.hahaton.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
 @Entity
 @Data
 @Table(name = "office")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Office {
@@ -24,10 +26,7 @@ public class Office {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "organisation_id")
-    private Organisation company;
-
-    @OneToMany(mappedBy = "office")
-    private Collection<Place> places;
+    private Organisation organisation;
 }

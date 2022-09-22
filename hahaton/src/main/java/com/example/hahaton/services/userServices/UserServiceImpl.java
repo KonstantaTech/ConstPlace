@@ -1,8 +1,11 @@
 package com.example.hahaton.services.userServices;
 
+import com.example.hahaton.DAO.BookingDAO;
 import com.example.hahaton.DAO.RoleDAO;
 import com.example.hahaton.DAO.UserDAO;
+import com.example.hahaton.DTO.UserPersonalPageDTO;
 import com.example.hahaton.DTO.UserRegistrationDTO;
+import com.example.hahaton.model.Booking;
 import com.example.hahaton.model.Role;
 import com.example.hahaton.model.RoleTypes;
 import com.example.hahaton.model.User;
@@ -15,17 +18,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
 @Slf4j
-//@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
+    private final BookingDAO bookingDAO;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -64,6 +66,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User findUserByEmail(String email) {
         return userDAO.findUserByEmail(email);
+    }
+
+    @Override
+    public UserPersonalPageDTO getUserData(String email) {
+        User user = userDAO.findUserByEmail(email);
+        Collection<Booking> bookings = bookingDAO.findAll();
+        UserPersonalPageDTO pageDTO = UserPersonalPageDTO.builder()
+                .name(user.getName())
+                .surname(user.getSurname())
+                .email(user.getEmail())
+                .contactNumber(user.getContactNumber())
+                .bookings(user.getBookings())
+                .build();
+        return pageDTO;
     }
 }
 
