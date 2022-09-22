@@ -14,12 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,21 +30,22 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
-@Api(value = "Authentication controller", description = "JWT auth controller")
 @RequiredArgsConstructor
+@Api(value = "Authentication controllers", description = "JWT auth controllers")
 public class AuthenticationController {
 
     private final UserService userService;
 
     private String JWT_SECRET = "qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==";
 
-    @ApiOperation(value = "Test controller")
+    @ApiOperation(value = "Register user")
     @PutMapping("/registration")
     public void getRegistrationData(@ApiParam(value = "User registration data")
                                     @RequestBody UserRegistrationDTO dto) {
         userService.saveUser(dto);
     }
 
+    @ApiOperation(value = "Refresh token if expired")
     @GetMapping("/auth/refreshToken")
     private void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -63,7 +59,7 @@ public class AuthenticationController {
                 User user = userService.findUserByEmail(email);
                 String accessToken = JWT.create()
                         .withSubject(user.getEmail())
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                        .withExpiresAt(new Date(System.currentTimeMillis() + 31 * 24 * 6 * 10 * 60 * 1000))  //31 days
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList()))
                         .sign(algorithm);

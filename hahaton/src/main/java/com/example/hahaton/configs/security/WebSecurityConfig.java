@@ -30,13 +30,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/login/**");
         http.csrf().disable();
         http.httpBasic().disable();
-        http.authorizeHttpRequests().anyRequest().permitAll();
         http.
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http.authorizeRequests().antMatchers("/**").permitAll();
+        http.authorizeRequests().antMatchers("/organisation/**").hasAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers("/cabinet").hasAuthority("ROLE_USER");
 
     }
 }
